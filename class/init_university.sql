@@ -1,7 +1,8 @@
-create database university;
-/*use university;*/
+create database university
+go
+use university;
 create table student(
-	stu_id char(9) primary key, /* ´æ´¢Ñ§ÉúºÅÂë */
+	stu_id char(9) primary key, /* å­˜å‚¨å­¦ç”Ÿå·ç  */
 	stu_name char(20) unique,
 	stu_sex char(2),
 	stu_age smallint,
@@ -18,8 +19,8 @@ create table elective_course(
 	stu_id char(9),
 	course_id char(4),
 	grade smallint,
-	primary key (stu_id, course_id), /* Ö÷ÂëÓĞÁ½¸öÊôĞÔ¹¹³É, ±ØĞë×÷Îª±í¼¶ÍêÕûĞÔ½øĞĞ¶¨Òå */
+	primary key (stu_id, course_id), /* ä¸»ç æœ‰ä¸¤ä¸ªå±æ€§æ„æˆ, å¿…é¡»ä½œä¸ºè¡¨çº§å®Œæ•´æ€§è¿›è¡Œå®šä¹‰ */
 	foreign key (stu_id) references student(stu_id),
-		/* ±í¼¶ÍêÕûĞÔÔ¼ÊøÌõ¼ş, stu_idÊÇÍâÂë, ±»²ÎÕÕ±íÊÇstudent */
+		/* è¡¨çº§å®Œæ•´æ€§çº¦æŸæ¡ä»¶, stu_idæ˜¯å¤–ç , è¢«å‚ç…§è¡¨æ˜¯student */
 	foreign key (course_id) references course(course_id)
 );
