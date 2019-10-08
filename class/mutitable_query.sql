@@ -83,9 +83,9 @@ from course;
 */
 
 ---- 查询每门课的间接先修课(先修课的先修课)
-
 select cur.course_id,
-  cur.course_name, pre.course_pro_id
+  cur.course_name,
+  pre.course_pro_id as indirect_prerequisties
 from course as cur, course as pre
 where  cur.course_pro_id = pre.course_id;
 /*
@@ -97,7 +97,21 @@ where  cur.course_pro_id = pre.course_id;
   7,PASCAL语言,NULL
 
 */
---  TODO: 查询先修课的名字
+
+--  查询间接先修课的名字
+select cur.course_id,
+  cur.course_name,
+  pre.course_pro_id as indirect_prerequisties,
+  prepre.course_name as indirect_prerequisties_name
+from course as cur, course as pre, course as prepre
+where  cur.course_pro_id = pre.course_id and pre.course_pro_id = prepre.course_id;
+/*
+  course_id,course_name,indirect_prerequisties,indirect_prerequisties_name
+  1,数据库,7,PASCAL语言
+  3,信息系统,5,数据结构
+  5,数据结构,6,数据处理
+
+*/
 
 -- 外连接
 -- 查询每个学生与选修课情况
