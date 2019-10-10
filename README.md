@@ -1,4 +1,5 @@
 # learn_database 学习数据库
+[![HitCount](http://hits.dwyl.io/chenboshuo/chenboshuo/learn_database.svg)](http://hits.dwyl.io/chenboshuo/chenboshuo/learn_database)
 ## 参考
 -   [我遇到问题的解决方案](https://github.com/chenboshuo/fiddle#3database)
 -   数据库系统概念
