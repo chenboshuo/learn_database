@@ -144,3 +144,117 @@ stu_id,stu_name,stu_sex,stu_age,stu_dept,course_id,grade
 200215125,张立,男,19,IS,NULL,NULL
 */
 
+-- 3.4.2 嵌套查询
+
+
+select stu_name
+from student
+where stu_id in(
+  select stu_id
+from elective_course
+where course_id = '2'
+);
+
+/*
+  stu_name
+  李勇
+  刘晨
+*/
+
+/* in 可以用其他逻辑替换 */
+
+-- 不相关子查询
+/* 子条件不依赖父查询 */
+
+---- 带有 in 的子查询
+
+-- 确定刘晨在同一个系的学生
+select stu_id, stu_name, stu_dept
+from student
+where stu_dept in(
+  select stu_dept
+from student
+where stu_name = '刘晨'
+);
+/*
+  stu_id,stu_name,stu_dept
+  200215121,李勇,CS
+  200215122,刘晨,CS
+  
+*/
+
+-- 带有比较查询的运算符(确切知道内层只有一个值)
+/* 子查询一定在比较运算符之后 */
+
+-- 找出每个学生超出他选修课程平均成绩的课程号
+select stu_id, course_id
+from elective_course as x
+where grade >= (
+  select avg(grade)
+from elective_course as y
+where y.stu_id = x.stu_id
+);
+
+/*
+  先查询外层查询
+  从外层循环第一个元组,根据内层属性值查询,
+  若where返回值为真,替换外层的属性
+
+  stu_id,course_id
+  200215121,1
+  200215121,3
+  200215122,2
+
+*/
+
+-- 带有any的子查询
+-- 查询CS系中比计算机系任意一个学生年龄小的姓名年龄
+select stu_name, stu_age
+from student
+where stu_age < any(
+  select stu_age
+from student
+where stu_dept='CS'
+);
+/*
+  stu_name,stu_age
+  刘晨,19
+  王敏,18
+  张立,19
+
+  Total execution time: 00:00:00.039  
+*/
+
+-- 用聚集函数实现
+select stu_name, stu_age
+from student
+where stu_age < (
+  select max(stu_age)
+from student
+where stu_dept='CS'
+);
+/*
+  stu_name,stu_age
+  刘晨,19
+  王敏,18
+  张立,19
+
+  execution time: 00:00:00.014
+*/
+
+-- 查询非计算机系中比计算机系所有学生年龄都小的姓名与年龄
+select stu_name, stu_age
+from student
+where stu_age < all(
+  select stu_age
+from student
+where stu_dept = 'CS'
+);
+/*
+  stu_name,stu_age
+  王敏,18
+*/
+
+select stu_dept, avg(grade)
+from student, elective_course
+where student.stu_id = elective_course.stu_id;
