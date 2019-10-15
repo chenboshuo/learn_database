@@ -181,6 +181,19 @@ where stu_name = '刘晨'
   200215121,李勇,CS
   200215122,刘晨,CS
   
+  Total execution time: 00:00:00.043
+*/
+
+-- 利用链接实现
+select b.stu_id, b.stu_name, b.stu_dept
+from student as a, student as b
+where a.stu_dept = b.stu_dept and a.stu_name = '刘晨';
+/*
+  stu_id,stu_name,stu_dept
+  200215121,李勇,CS
+  200215122,刘晨,CS
+
+  Total execution time: 00:00:00.090
 */
 
 -- 带有比较查询的运算符(确切知道内层只有一个值)
@@ -255,6 +268,149 @@ where stu_dept = 'CS'
   王敏,18
 */
 
-select stu_dept, avg(grade)
-from student, elective_course
-where student.stu_id = elective_course.stu_id;
+-- 查询计算机系学生的数据库成绩
+select stu_id, course_id, grade
+from elective_course
+where stu_id in
+(select stu_id
+  from student
+  where stu_dept='CS')
+  and course_id = (
+  select course_id
+  from course
+  where course_name = '数据库'
+)
+
+---- 带有exists谓词子查询
+/*
+  exists 的子查询不返回任何数据,只返回逻辑真假
+    内层查询非空,返回真,否则返回假
+  所以一般不写目标列表达式
+
+*/
+-- 查询所有选修1号课程的学生姓名
+select stu_name
+from student
+where exists (
+  select *
+from elective_course
+where stu_id= student.stu_id and course_id='1'
+);
+/*
+  stu_name
+  李勇
+*/
+-- 查询没有选修1号课程的学生与姓名
+-- TODO: 其他方式
+select stu_name
+from student
+where not exists (
+  select *
+from elective_course
+where stu_id= student.stu_id and course_id='1'
+);
+/*
+  stu_name
+  刘晨
+  王敏
+  张立
+*/
+
+-- 查询与 "刘晨" 在同一个系的学生
+select s1.stu_id, s1.stu_name, s1.stu_dept
+from student as s1
+where exists(
+  select *
+from student as s2
+where s2.stu_dept = s1.stu_dept and
+  s2.stu_name = '刘晨'
+);
+/*
+  stu_id,stu_name,stu_dept
+  200215121,李勇,CS
+  200215122,刘晨,CS
+*/
+
+-- 用exist实现全程量词
+---- 选修选修全部课程的学生
+------ 不存在没有选修的课
+select stu_name
+from student
+where not exists(
+  select *
+from course
+where not exists(
+    select *
+from elective_course
+where stu_id= student.stu_id and course_id=course.course_id
+  )
+);
+
+-- Exists 实现蕴含查询
+---- 至少选择了学生200215122选修全部课程的号码
+---- 不存在课程y学生200215122选修了而学生x没选.
+select distinct stu_id
+from elective_course as x
+where not exists(
+  select *
+from elective_course as y
+where y.stu_id = '200215122'
+  and not exists(
+      select *
+  from elective_course as z
+  where z.stu_id = x.stu_id
+    and z.course_id = y.course_id
+    )
+)
+/*
+  stu_id
+  200215121
+  200215122
+*/
+
+-- TODO 不用exists
+
+-- 3.4.4 集合查询
+/*
+  参加集合操作的各种查询列数必须相同
+*/
+
+---- 查询CS系和年龄不大于19的学生
+  (
+  select *
+  from student
+  where stu_dept = 'CS'
+)
+union
+  (
+  select *
+  from student
+  where stu_age <=19
+);
+
+-- TODO 既选了1又选了2的学生(用嵌套实现)
+
+-- 3.4.5 基于派生表的查询
+---- 找出每个学生超过选修平均成绩的课程号
+select stu_id, course_id
+from elective_course, (select stu_id, avg(grade)
+  from elective_course
+  group by stu_id) as avg_(avg_stu_id, avg_grade)
+where elective_course.stu_id = avg_.avg_stu_id and elective_course.grade >= avg_.avg_grade
+/*
+  stu_id,course_id
+  200215121,1
+  200215121,3
+  200215122,2
+*/
+
+-- 查询所有选修1号的学生姓名
+select stu_name
+from student, (select stu_id
+  from elective_course
+  where course_id='1') as e1
+where student.stu_id = e1.stu_id
+/*
+  stu_name
+  李勇
+*/
