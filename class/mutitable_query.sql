@@ -301,7 +301,6 @@ where stu_id= student.stu_id and course_id='1'
   李勇
 */
 -- 查询没有选修1号课程的学生与姓名
--- TODO: 其他方式
 select stu_name
 from student
 where not exists (
@@ -315,6 +314,23 @@ where stu_id= student.stu_id and course_id='1'
   王敏
   张立
 */
+-- 练习 其他方式
+use school;
+select stu_name
+from student
+where stu_id not in(
+  select stu_id
+from elective_course
+where course_id = '1'
+);
+/*
+  stu_name
+  刘晨
+  王敏
+  张立
+
+*/
+
 
 -- 查询与 "刘晨" 在同一个系的学生
 select s1.stu_id, s1.stu_name, s1.stu_dept
@@ -348,18 +364,18 @@ where stu_id= student.stu_id and course_id=course.course_id
 
 -- Exists 实现蕴含查询
 ---- 至少选择了学生200215122选修全部课程的号码
----- 不存在课程y学生200215122选修了而学生x没选.
+---- 不存在课程c学生200215122选修了而学生s没选.
 select distinct stu_id
-from elective_course as x
+from elective_course as s
 where not exists(
   select *
-from elective_course as y
-where y.stu_id = '200215122'
+from elective_course as c
+where c.stu_id = '200215122'
   and not exists(
       select *
   from elective_course as z
-  where z.stu_id = x.stu_id
-    and z.course_id = y.course_id
+  where z.stu_id = s.stu_id
+    and z.course_id = c.course_id
     )
 )
 /*
@@ -368,7 +384,16 @@ where y.stu_id = '200215122'
   200215122
 */
 
--- TODO 不用exists
+-- 练习 不用exists
+select distinct b.stu_id
+from elective_course as a, elective_course as b
+where a.course_id = b.course_id and a.stu_id='200215122';
+
+/*
+  stu_id
+  200215121
+  200215122
+*/
 
 -- 3.4.4 集合查询
 /*
@@ -388,8 +413,19 @@ union
   where stu_age <=19
 );
 
--- TODO 既选了1又选了2的学生(用嵌套实现)
+-- 练习: 既选了1又选了2的学生(用嵌套实现)
+select stu_id
+from elective_course
+where course_id = '1' and stu_id in(
+  select stu_id
+  from elective_course
+  where course_id = '2'
+);
 
+/*
+  stu_id
+  200215121
+*/
 -- 3.4.5 基于派生表的查询
 ---- 找出每个学生超过选修平均成绩的课程号
 select stu_id, course_id
