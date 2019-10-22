@@ -27,7 +27,7 @@ create table employee
   -- 员工编号
   name varchar(10) not null,
   -- 姓名
-  birthday varchar(8) not null,
+  birthday datetime not null,
   -- 出生日期
   sex bit not null,
   -- 性别
