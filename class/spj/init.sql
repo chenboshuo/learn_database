@@ -1,6 +1,7 @@
-create database spj
+create database sapre_parts_supply
 go
-use spj;
+use sapre_parts_supply;
+
 
 create table supply
 (
@@ -22,7 +23,7 @@ create table project
   project_name varchar(20),
   city varchar(10)
 );
-create table SPJ
+create table quantity
 (
   supply_id varchar(4),
   part_id varchar(4),
@@ -72,42 +73,41 @@ insert into project
 values('J6', '无线电厂', '常州');
 insert into project
 values('J7', '半导体厂', '南京');
-insert into SPJ
+insert into quantity
 values('S1', 'P1', 'J1', 200);
-insert into SPJ
+insert into quantity
 values('S1', 'P1', 'J3', 100);
-insert into SPJ
+insert into quantity
 values('S1', 'P1', 'J4', 700);
-insert into SPJ
+insert into quantity
 values('S1', 'P2', 'J2', 100);
-insert into SPJ
+insert into quantity
 values('S2', 'P3', 'J1', 400);
-insert into SPJ
+insert into quantity
 values('S2', 'P3', 'J2', 200);
-insert into SPJ
+insert into quantity
 values('S2', 'P3', 'J3', 500);
-insert into SPJ
+insert into quantity
 values('S2', 'P3', 'J4', 400);
-insert into SPJ
+insert into quantity
 values('S2', 'P5', 'J1', 400);
-insert into SPJ
+insert into quantity
 values('S2', 'P5', 'J2', 100);
-insert into SPJ
+insert into quantity
 values('S3', 'P1', 'J1', 200);
-insert into SPJ
+insert into quantity
 values('S3', 'P3', 'J1', 200);
-insert into SPJ
+insert into quantity
 values('S4', 'P5', 'J1', 100);
-insert into SPJ
+insert into quantity
 values('S4', 'P6', 'J3', 300);
-insert into SPJ
+insert into quantity
 values('S4', 'P6', 'J4', 200);
-insert into SPJ
+insert into quantity
 values('S5', 'P2', 'J4', 100);
-insert into SPJ
+insert into quantity
 values('S5', 'P3', 'J1', 200);
-insert into SPJ
+insert into quantity
 values('S5', 'P6', 'J2', 200);
-insert into SPJ
+insert into quantity
 values('S5', 'P6', 'J4', 500);
-
