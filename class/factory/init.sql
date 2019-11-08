@@ -83,3 +83,6 @@ values
   ('3001', '4200', '2000'),
   ('3002', '4100', '1800'),
   ('3003', '4600', '1400');
+
+alter table salary 
+add constraint income_constraint check(income between 0 and  9999);
