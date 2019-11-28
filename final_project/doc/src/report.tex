@@ -1,0 +1,40 @@
+\documentclass[UTF8]{ctexart}
+
+% 参考文献
+\bibliographystyle{plain} % 声明参考文献格式
+\usepackage{url}
+
+
+% 设置页边距
+\usepackage{geometry}
+\geometry{a4paper,scale=0.8}
+
+% 插入PDF
+\usepackage{pdfpages}
+
+% 插图功能的相关宏包
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{{figures/}}
+
+% % 修改字体
+% \usepackage{type1cm}  %（其中的 cm 为 Computer Modern 的缩写）
+% \CJKfamily{song}  % 宋体
+
+% 增加目录中的项目用tocbibind
+\usepackage[nottoc]{tocbibind}
+% 宏会默认增加目录本身,参考文献,索引等项目.noctoc取消了目录中显示目录
+\begin{document}
+
+\includepdf[pages={1}]{figures/cover.pdf}
+\newpage
+\tableofcontents
+
+% 正文
+% \section{系统需求分析}
+
+
+
+\bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
+
+\end{document}
