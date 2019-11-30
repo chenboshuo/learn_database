@@ -1,32 +1,8 @@
-\documentclass[UTF8]{ctexart}
+\documentclass{myreport}
 
-% 参考文献
-\bibliographystyle{plain} % 声明参考文献格式
-\usepackage{url}
-
-
-% 设置页边距
-\usepackage{geometry}
-\geometry{a4paper,scale=0.8}
-
-% 插入PDF
-\usepackage{pdfpages}
-
-% 插图功能的相关宏包
-\usepackage{graphicx}
-\usepackage{float}
-\graphicspath{{figures/}}
-
-% % 修改字体
-% \usepackage{type1cm}  %（其中的 cm 为 Computer Modern 的缩写）
-% \CJKfamily{song}  % 宋体
-
-% 增加目录中的项目用tocbibind
-\usepackage[nottoc]{tocbibind}
-% 宏会默认增加目录本身,参考文献,索引等项目.noctoc取消了目录中显示目录
 \begin{document}
 
-\includepdf[pages={1}]{figures/cover.pdf}
+\maketitle
 
 % 目录
 \newpage
@@ -55,7 +31,11 @@
       \item "课程"实体集, 包含课程号,课程类型(是否是必修课), 班级,单双周, 开课周, 节数\footnote{即每一节大课有多少小节, 大多数课程都是两节, 有部分课程是三节或一节}.
     \end{itemize}
 
-
+    % % 插入代码
+    % \begin{lstlisting}[language=sql]
+    %   use university;
+    %   select * from university;
+    % \end{lstlisting}
 
 % 参考文献
 \nocite{silberschatz1997database} % 数据库系统概论
