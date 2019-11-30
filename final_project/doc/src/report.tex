@@ -27,14 +27,39 @@
 \begin{document}
 
 \includepdf[pages={1}]{figures/cover.pdf}
+
+% 目录
 \newpage
 \tableofcontents
+\newpage
 
 % 正文
-% \section{系统需求分析}
+\section{系统需求分析}
+  \subsection{需求概述}
+    对于排课管理系统, 课程设计的要求如下:
+    \begin{itemize}
+      \item 实现班级, 课程等基本信息的管理;
+      \item 实现学生, 教师信息的管理;
+      \item 实现班级课程及课程的任课教师和排课管理;
+      \item 创建存储过程检测指定教师, 指定节次是否有课;
+      \item 创建存储过程生成指定班级的课程表;
+      \item 创建存储过程生成指定老师的课程表;
+      \item 建立数据库相关表之间的参照完整性约束.
+    \end{itemize}
+
+    即通过数据库自动排课并提供给学生查询,让学生和老师可以查询具体时间安排.
+    改系统可以通过以下实体集实现
+    \begin{itemize}
+      \item "教师"实体集, 包含教师的编号, 姓名, 部门, 院系, 职称等信息;
+      \item "学生"实体集, 包含学生的学号, 姓名, 班级, 院系等信息;
+      \item "课程"实体集, 包含课程号,课程类型(是否是必修课), 班级,单双周, 开课周, 节数\footnote{即每一节大课有多少小节, 大多数课程都是两节, 有部分课程是三节或一节}.
+    \end{itemize}
 
 
 
+% 参考文献
+\nocite{silberschatz1997database} % 数据库系统概论
+\nocite{sqldbm} % 数据库画图软件
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
 \end{document}
