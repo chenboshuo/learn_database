@@ -26,15 +26,81 @@
     即通过数据库自动排课并提供给学生查询,让学生和老师可以查询具体时间安排.
     该系统可以通过以下实体集实现
     \begin{itemize}
-      \item "教师"实体集, 包含教师的编号, 姓名,院系, 职称, 研究方向\footnote{可能是老师工作的具体院系, 如"计算机系", 也可能是其他研究所,如"基础数学研究所"};
-      \item "学生"实体集, 包含学生的学号, 姓名, 班级, 院系等信息;
-      \item "教室"实体集, 包含楼号, 教室号和容量;
-      \item "院系"实体集, 包含院系编号和院系名;
+      \item \emph{教学楼}实体集, 包含楼号和楼名;
+      \item \emph{教室}实体集, 包含楼号,教室号和容量;
+      \item \emph{院系}实体集, 包含院系编号和院系名;
+      \item \emph{课程}实体集, 包含课程号, 课程名, 课程类型, 开课学院;
+      \item \emph{教师}实体集, 包含教师的编号, 姓名,院系, 职称, 研究方向\footnote{可能是老师工作的具体院系, 如"计算机系", 也可能是其他研究所,如"基础数学研究所"};
+      \item \emph{班级}实体集, 班级ID, 班级名, 人数, 所属院系;
 
     \end{itemize}
 
   \subsection{组织结构分析}
-        
+    本系统适用于教师与学生对课程的管理, 提供给学生,教师所有表的查看权限, 数据库管理员拥有其他权限.
+
+  \subsection{管理功能分析}
+    排课是个综合系统,需要从教务系统中导入数据(或者由数据库管理员人工导入),实现课程安排,即课程管理, 同时将课程的信息分别存储汇总, 部分实现教师管理, 时间管理,教室管理, 班级管理.
+    % \cref{fig:function}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{function}
+      \caption{排课系统的管理功能}
+      \label{fig:function}
+    \end{figure}
+
+  \subsection{业务流分析}
+
+  \subsection{数据字典}
+    根据数据流图中所涉及的信息，并对信息进行相应的分析，确定出所有数据项的描述内容，其主要分为数据项名称、类型、长度和取值范围，如\cref{t:data_dict}所示
+
+    % TODO
+    % http://sparkandshine.net/latex-use-notes-longtable-with-examples/
+    \begin{longtable}{cccccl}
+      \caption{数据字典(具体的数据的大小参考\cite{tinyint})}
+      \label{t:data_dict} \\
+      \toprule[1.5pt]
+        \makebox[0.1\textwidth]{名称}  &
+        \makebox[0.2\textwidth]{含义} &
+        \makebox[0.1\textwidth]{类型} &
+        \makebox[0.1\textwidth]{大小} &
+        \makebox[0.1\textwidth]{取值范围} &
+        \makebox[0.2\textwidth]{备注} \\
+      \midrule[1pt]
+      \endhead
+
+      \bottomrule[1.5pt]
+      \endfoot
+        楼号    & 教学楼的编号 & tinyint & \SI{1}{B} & 0-255 & \\
+        楼名    & 教学楼的名称 & char(5) & \SI{15}{B} & 长度$\le 5$ & \\
+        容量    & 教学楼的容量 & tinyint & \SI{1}{B} & 0-255 & \\
+        院系编号 & 院系的编号 & tinyint & \SI{1}{B} & 0-255 & \\
+        院系名   & 院系名 & char(8) & $\le\SI{24}{B}$ & 0-255 & \\
+        课程号   & 课程编号 & char(20) & \SI{20}{B} & 20位 & \\
+        课程名   & 课程名 & char(10) & $\le \SI{30}{B}$ & 10位 & \\
+        类型名   & 课程的类型 & char(10) & $\le \SI{30}{B}$ & \\
+        教师号   & 教师编号 & char(20) & \SI{20}{B} & 20位 & \\
+        教师名   & 教师的姓名 & char(10) & $\le \SI{30}{B}$ & \\
+        职称     & 教师的职称 & char(3) &\SI{9}{B}  & 助教, 讲师, 副教授, 教授 \\
+        班号     & 班级编号 & char(20) & \SI{20}{B} & 20位 & \\
+        班名     & 班级的全名 & char(10) & $\le \SI{30}{B}$ & \\
+        人数     & 班级人数 & tinyint & \SI{1}{B} & 0-255 & \\
+        时间号   & 上课时间的标识 & char(20) & \SI{20}{B} & 20位 & \\
+        日       & 星期几 & tinyint & \SI{1}{B} & 0-255 & 星期用1-5代替\\
+        开始时间 & 上课时间 & tinyint & \SI{1}{B} & 0-255 & 假设上课时间都是整点, 24小时制\\
+        结束时间 & 下课时间 & tinyint & \SI{1}{B} & 0-255 & 假设下课时间都是整点, 24小时制\\
+        开始周   & 第几周开始 & tinyint & \SI{1}{B} & 0-255 & \\
+        结束周   & 第几周结束 & tinyint & \SI{1}{B} & 0-255 & \\
+        is\_odd  & 单周上课 & bit & \SI{1}{B} & 0,1 & 默认为1 \\
+        is\_even & 双周上课 & bit & \SI{1}{B} & 0,1 & 默认为1 \\
+        节号      & 上课节的标识 & char(20) & \SI{20}{B} & 20位 & \\
+        学期      & 在上学期或下学期 & bit & \SI{1}{B} & 0,1 & 每年第一学期为0,第二学期为1 \\
+        年        & 年份 & smallint & $-32,768$- $32,767$ & &\\
+
+        % \specialrule{0em{8pt}{1pt}}
+    \end{longtable}
+
+
+
 
 \section{数据库概念结构设计}
 
@@ -57,7 +123,6 @@
 \nocite{silberschatz1997database} % 数据库系统概论
 \nocite{sqldbm} % 数据库画图软件
 \nocite{pyqt5} % PyQt5 参考文档
-\nocite{tinyint} % tiny int 字节大小
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
 

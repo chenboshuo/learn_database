@@ -72,6 +72,9 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 
 % 物理单位
 \RequirePackage{siunitx}
+
+% 表格
+\RequirePackage{tabularx}
 \sisetup{
   list-final-separator = { ~\text{和}~ },  % usage \SIlist{1;2;3}{m}
   list-pair-separator = { ~\text{和}~ },
