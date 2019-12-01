@@ -24,22 +24,49 @@
     \end{itemize}
 
     即通过数据库自动排课并提供给学生查询,让学生和老师可以查询具体时间安排.
-    改系统可以通过以下实体集实现
+    该系统可以通过以下实体集实现
     \begin{itemize}
-      \item "教师"实体集, 包含教师的编号, 姓名, 部门, 院系, 职称等信息;
+      \item "教师"实体集, 包含教师的编号, 姓名,院系, 职称, 研究方向\footnote{可能是老师工作的具体院系, 如"计算机系", 也可能是其他研究所,如"基础数学研究所"};
       \item "学生"实体集, 包含学生的学号, 姓名, 班级, 院系等信息;
-      \item "课程"实体集, 包含课程号,课程类型(是否是必修课), 班级,单双周, 开课周, 节数\footnote{即每一节大课有多少小节, 大多数课程都是两节, 有部分课程是三节或一节}.
+      \item "教室"实体集, 包含楼号, 教室号和容量;
+      \item "院系"实体集, 包含院系编号和院系名;
+
     \end{itemize}
 
-    % % 插入代码
-    % \begin{lstlisting}[language=sql]
-    %   use university;
-    %   select * from university;
-    % \end{lstlisting}
+  \subsection{组织结构分析}
+        
+
+\section{数据库概念结构设计}
+
+\section{数据库逻辑结构设计}
+
+\section{数据库的物理实现}
+
+\section{数据库功能调试}
+（包括视图、索引等内容的测试）
+
+\section{应用程序设计}
+
+\section{设计总结}
+
+
+
+
 
 % 参考文献
 \nocite{silberschatz1997database} % 数据库系统概论
 \nocite{sqldbm} % 数据库画图软件
+\nocite{pyqt5} % PyQt5 参考文档
+\nocite{tinyint} % tiny int 字节大小
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
+
 \end{document}
+
+
+% 命令用法
+% % 插入代码
+% \begin{lstlisting}[language=sql]
+%   use university;
+%   select * from university;
+% \end{lstlisting}
