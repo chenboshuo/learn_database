@@ -27,8 +27,8 @@ create table department(
 
  create table course(
    course_id char(19),
-   title varchar(20),
-   type varchar(10),
+   title char(10),
+   type char(10),
    depart_id tinyint,
 
    primary key (course_id),
@@ -36,9 +36,9 @@ create table department(
 );
 
 create table instructor(
-  ID char(19),
+  ID char(20),
   name varchar(10),
-  title char(2), /* 职称*/
+  title char(3), /* 职称*/
   depart_id tinyint,
   direction varchar(10), /* 研究所或者所属系 */
 
@@ -47,8 +47,8 @@ create table instructor(
 );
 
 create table class(
-  class_id char(19),
-  class_name varchar(8),
+  class_id char(20),
+  class_name char(10),
   population tinyint,
   depart_id tinyint,
 
@@ -57,7 +57,7 @@ create table class(
 );
 
 create table time_slot(
-  time_slot_id char(19),
+  time_slot_id char(20),
   day tinyint,
   begin_time tinyint,
   end_time tinyint,
@@ -71,8 +71,8 @@ create table time_slot(
 );
 
 create table section(
-  sect_id char(19),
-  course_id char(19),
+  sect_id char(20),
+  course_id char(20),
   semester bit, /* 上半年或下半年 */
   year int, /* 开课年份 */
   building_id tinyint,

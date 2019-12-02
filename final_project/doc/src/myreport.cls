@@ -477,4 +477,9 @@ Just choose `xelatex', no `pdflatex' or `latex' and so on.}
 % 设置参考文献格式
 \bibliographystyle{plain}
 
+% 优化大于等于和小于等于
+\renewcommand{\le}{\leqslant}
+\renewcommand{\ge}{\geqslant}
+
+
 \endinput
