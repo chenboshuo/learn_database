@@ -55,7 +55,7 @@
 
     % TODO
     % http://sparkandshine.net/latex-use-notes-longtable-with-examples/
-    \begin{longtable}{cccccl}
+    \begin{longtabu} to \textwidth {clcXXX}
       \caption{数据字典(具体的数据的大小参考\cite{tinyint})}
       \label{t:data_dict} \\
       \toprule[1.5pt]
@@ -70,6 +70,9 @@
 
       \bottomrule[1.5pt]
       \endfoot
+
+
+      % 表格正文
         楼号    & 教学楼的编号 & tinyint & \SI{1}{B} & 0-255 & \\
         楼名    & 教学楼的名称 & char(5) & \SI{15}{B} & 长度$\le 5$ & \\
         容量    & 教学楼的容量 & tinyint & \SI{1}{B} & 0-255 & \\
@@ -94,10 +97,10 @@
         is\_even & 双周上课 & bit & \SI{1}{B} & 0,1 & 默认为1 \\
         节号      & 上课节的标识 & char(20) & \SI{20}{B} & 20位 & \\
         学期      & 在上学期或下学期 & bit & \SI{1}{B} & 0,1 & 每年第一学期为0,第二学期为1 \\
-        年        & 年份 & smallint & $-32,768$- $32,767$ & &\\
+        年        & 年份 & smallint & \SI{2}{B} &$-32,768$- $32,767$ & \\
 
         % \specialrule{0em{8pt}{1pt}}
-    \end{longtable}
+    \end{longtabu}
 
 
 
