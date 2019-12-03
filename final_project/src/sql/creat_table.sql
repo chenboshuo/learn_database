@@ -21,15 +21,15 @@ create table classroom(
 
 create table department(
   dept_id tinyint,
-  dept_name char(8),
+  dept_name char(8) not null,
   primary key (dept_id),
 );
 
  create table course(
-   course_id char(19),
-   title char(10),
+   course_id char(20),
+   title char(10) not null,
    type char(10),
-   depart_id tinyint,
+   depart_id tinyint not null,
 
    primary key (course_id),
    foreign key (depart_id) references department,
@@ -37,9 +37,9 @@ create table department(
 
 create table instructor(
   ID char(20),
-  name varchar(10),
+  name varchar(10) not null,
   title char(3), /* 职称*/
-  depart_id tinyint,
+  depart_id tinyint not null,
   direction varchar(10), /* 研究所或者所属系 */
 
   primary key (ID),
@@ -48,7 +48,7 @@ create table instructor(
 
 create table class(
   class_id char(20),
-  class_name char(10),
+  class_name char(10) not null,
   population tinyint,
   depart_id tinyint,
 
@@ -58,10 +58,10 @@ create table class(
 
 create table time_slot(
   time_slot_id char(20),
-  day tinyint,
-  begin_time tinyint,
-  end_time tinyint,
-  begin_week tinyint,
+  day tinyint not null,
+  begin_time tinyint not null,
+  end_time tinyint not null,
+  begin_week tinyint default 1,
   end_week tinyint,
 
   is_in_odd bit default 1, /* 单周是否上课 */
@@ -75,9 +75,9 @@ create table section(
   course_id char(20),
   semester bit, /* 上半年或下半年 */
   year int, /* 开课年份 */
-  building_id tinyint,
-  room_number smallint,
-  time_slot_id char(19),
+  building_id tinyint not null,
+  room_number smallint not null,
+  time_slot_id char(20),
 
   primary key (sect_id),
   foreign key (course_id) references course,
