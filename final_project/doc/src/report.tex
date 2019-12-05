@@ -223,8 +223,21 @@
 
 
 \section{数据库逻辑结构设计}
+  \subsection{概念模型转化为逻辑模型}
+
+  \subsection{逻辑模型设计}
+    % （.pdm 图）
+
+\section{数据库的物理实现}
   \subsection{表设计}
     % （SQL server 中各表设计）
+    数据库中各表如\cref{fig:table_diagram}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 1\textwidth]{table_diagram}
+      \caption{SQL sever 中各表设计\upcite{ssms_diagram}}
+      \label{fig:table_diagram}
+    \end{figure}
 
   \subsection{创建表和完整性约束代码设计}
     教学楼表定义:
@@ -247,10 +260,95 @@
       );
     \end{lstlisting}
 
+    院系表定义:
+    \begin{lstlisting}[language=sql]
+      create table department(
+        dept_id tinyint,
+        dept_name char(8) not null,
+        primary key (dept_id),
+      );
+    \end{lstlisting}
+
+    \emph{课程}表
+    \begin{lstlisting}[language=sql]
+     create table course(
+       course_id char(19),
+       title char(10) not null,
+       type char(10),
+       depart_id tinyint not null,
+
+       primary key (course_id),
+       foreign key (depart_id) references department,
+    );
+    \end{lstlisting}
+
+    \emph{教师}表
+    \begin{lstlisting}[language=sql]
+      create table instructor(
+        ID char(20),
+        name varchar(10) not null,
+        title char(3), /* 职称*/
+        depart_id tinyint not null,
+        direction varchar(10), /* 研究所或者所属系 */
+
+        primary key (ID),
+        foreign key (depart_id) references department,
+      );
+    \end{lstlisting}
+
+    \emph{班级}表
+    \begin{lstlisting}[language=sql]
+      create table class(
+        class_id char(20),
+        class_name char(10) not null,
+        population tinyint,
+        depart_id tinyint,
+
+        primary key (class_id),
+        foreign key (depart_id) references department,
+      );
+    \end{lstlisting}
+
+    \emph{时间}表
+    \begin{lstlisting}[language=sql]
+      create table time_slot(
+        time_slot_id char(20),
+        day tinyint not null,
+        begin_time tinyint not null,
+        end_time tinyint not null,
+        begin_week tinyint default 1,
+        end_week tinyint,
+
+        is_in_odd bit default 1, /* 单周是否上课 */
+        is_in_even bit default 1, /* 双周是否上课 */
+
+        primary key (time_slot_id),
+      );
+    \end{lstlisting}
+
+    \emph{上课}表
+    \begin{lstlisting}[language=sql]
+      create table section(
+        sect_id char(20),
+        course_id char(20),
+        semester bit, /* 上半年或下半年 */
+        year int, /* 开课年份 */
+        building_id tinyint not null,
+        room_number smallint not null,
+        time_slot_id char(19),
+
+        primary key (sect_id),
+        foreign key (course_id) references course,
+        foreign key (building_id,room_number) references classroom,
+        foreign key (time_slot_id) references time_slot,
+      );
+
+    \end{lstlisting}
+
   \subsection{创建视图、索引、存储过程和触发器}
 
 
-\section{数据库的物理实现}
+
 
 \section{数据库功能调试}
 （包括视图、索引等内容的测试）
