@@ -42,11 +42,11 @@ class Login(QWidget):
 
         self.setLayout(self.v_layout)
 
-
     def lineedit_init(self):
         """登录框的灰色文字"""
         self.user_line.setPlaceholderText('Please enter your username')
         self.pwd_line.setPlaceholderText('Please enter your password')
+        self.pwd_line.setEchoMode(QLineEdit.Password)  # 让密码变成圆点
 
         self.user_line.textChanged.connect(self.check_input_func)
         self.pwd_line.textChanged.connect(self.check_input_func)
@@ -71,12 +71,14 @@ class Login(QWidget):
         """用于检测登录是否成功"""
         if USER_PWD.get(self.user_line.text()) == self.pwd_line.text():
             QMessageBox.information(self, 'Information', 'Log in Successfully!')
+            sys.exit() # TODO 登录之后的处理
         else:
             QMessageBox.critical(self, 'Wrong', 'Wrong Username or Password!')
 
         self.user_line.clear()
         self.pwd_line.clear()
 
+# 测试登录界面
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     demo = Login()
