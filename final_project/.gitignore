@@ -11,3 +11,5 @@
 *.bcf
 *.xdv
 *.out
+
+**/.idea
