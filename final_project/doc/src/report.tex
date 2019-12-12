@@ -53,7 +53,7 @@
       管理员业务如图\cref{fig:manager_function}
       \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.6\textwidth]{manager_function}
+        \includegraphics[width = \textwidth]{manager_function}
         \caption{管理员的业务流}
         \label{fig:manager_function}
       \end{figure}
@@ -62,7 +62,7 @@
       \cref{fig:teacher_function}
       \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.6\textwidth]{teacher_function}
+        \includegraphics[width = 0.8\textwidth]{teacher_function}
         \caption{教师业务流程}
         \label{fig:teacher_function}
       \end{figure}
@@ -82,7 +82,7 @@
     描绘了系统的主要功能
     \begin{figure}[H]
       \centering
-      \includegraphics[width = 0.6\textwidth]{dataflow_1}
+      \includegraphics[width = \textwidth]{dataflow_1}
       \caption{排课系统功能的第一层数据流图}
       \label{fig:dataflow_1}
     \end{figure}
@@ -199,16 +199,28 @@
         \end{tabular}
       \end{table}
 
-      \subsection{实体分析}
-
-      \subsection{属性分析}
-
-      \subsection{联系分析}
-
-      \subsection{概念模型设计}
-        % （.cdm图）
 
 \section{数据库概念结构设计}
+  \subsection{实体分析}
+
+  \subsection{属性分析}
+
+  \subsection{联系分析}
+
+  \subsection{概念模型设计}
+    经过需求分析和实体属性分析，
+    以及各实体之间的关系分析，
+    最终得到概念模型如
+    \cref{fig:concept_model}\footnote{访问\url{https://app.sqldbm.com/SQLServer/Share/3gOZcBDE7lI7tlvWVLWffUGFrngIE8md_DYjF4jNYw0}可在线查看}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = \textwidth]{concept_model}
+      \caption{数据库的概念模型(用sqlqbm制图\upcite{sqldbm})}
+      \label{fig:concept_model}
+    \end{figure}
+
+
+\section{数据库逻辑结构设计}
   \subsection{概念模型转化为逻辑模型}
     \subsubsection{一对一关系的转化}
       % （标注主、外键）
@@ -219,14 +231,14 @@
 
   \subsection{逻辑模型设计}
     % （.pdm图）
+    % \cref{fig:logical_model}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = \textwidth]{logical_model}
+      \caption{逻辑结构设计}
+      \label{fig:logical_model}
+    \end{figure}
 
-
-
-\section{数据库逻辑结构设计}
-  \subsection{概念模型转化为逻辑模型}
-
-  \subsection{逻辑模型设计}
-    % （.pdm 图）
 
 \section{数据库的物理实现}
   \subsection{表设计}
@@ -354,18 +366,80 @@
 （包括视图、索引等内容的测试）
 
 \section{应用程序设计}
+  本项目利用python的框架PyQt5 \upcite{pyqt5} 实现用户界面.
+
+  \subsection{登录界面}
+    根据\cite{pyqt5_login}的教程, 制作登录界面如
+    \cref{fig:login}
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{login}
+      \caption{登录界面}
+      \label{fig:login}
+    \end{figure}
+    先用模拟的账号尝试登录如
+    \cref{fig:login_test}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{login_test}
+      \caption{直接设定登录名与密码模拟登录}
+      \label{fig:login_test}
+    \end{figure}
+    登录成功.
+  \subsection{链接数据库}
+    根据 \cite{connect_database} 提供的教程, 先用sql语句创建测试用户:
+    \begin{lstlisting}[language=sql]
+      use mytimetable;
+
+      -- 创建一个登录账号TestUser
+      create login testuser with password = '123456';
+
+      -- 3．创建对应于这个登录账号的数据库用户TestUser
+      create user testuser from login testuser ;
+    \end{lstlisting}
+    然后用\emph{QtSql}模块, 进行链接测试.
+    % \cref{fig:test_connect}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{test_connect}
+      \caption{测试PyQt5与sqlserver的链接}
+      \label{fig:test_connect}
+    \end{figure}
+
+    测试通过后, 将该功能封装成函数,链接为数据库对象的构造函数,
+    关闭为数据库析构函数,如
+    \cref{fig:datebase_class_del}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{datebase_class_del}
+      \caption{简单的数据库对象图}
+      \label{fig:datebase_class_del}
+    \end{figure}
+
 
 \section{设计总结}
+  \subsection{应用改进}
 
+  \subsection{其他感想}
+    老师要求使用的\emph{powerdesiner}是不太好用的软件,
+    现在有在线服务可以将代码转换为示意图\upcite{sqldbm},
+    设计精确到代码也许能保证后面的工作可以正确进行,
+    且代码的操作比用鼠标操作更高效.
 
+    此外, 对于应用程序, 我选用了面向对象的设计思维,使用\emph{python}
+    的\emph{PyQt5}可以较快的完成特别美观的界面,
+    开发代码也简洁优雅, 并且有强大的界面美化库\upcite{icon},
+    程序可扩充性较强, 可以用\emph{python}的强大生态做成实用的工具.
 
 
 
 % 参考文献
 \nocite{silberschatz1997database} % 数据库系统概论
-\nocite{sqldbm} % 数据库画图软件
-\nocite{pyqt5} % PyQt5 参考文档
+
 \nocite{drawio}
+\nocite{pyqt5_beautify}
+\nocite{icon}
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
 
