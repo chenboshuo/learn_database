@@ -3,6 +3,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QLabel, QLineEdit, QPushButton, \
     QGridLayout, QVBoxLayout, QHBoxLayout, QMessageBox
+from DataBase import DataBase
+from MainUi import MainUi
 
 # 用于测试登录的用户密码
 USER_PWD = {
@@ -69,12 +71,16 @@ class Login(QWidget):
 
     def check_login_func(self):
         """用于检测登录是否成功"""
-        if USER_PWD.get(self.user_line.text()) == self.pwd_line.text():
+        try:
+            # USER_PWD.get(self.user_line.text()) == self.pwd_line.text()
+            db = DataBase(self.user_line.text(),self.pwd_line.text())
             QMessageBox.information(self, 'Information', 'Log in Successfully!')
-            sys.exit() # TODO 登录之后的处理
-        else:
+            sys.exit()  # 关闭程序
+
+        except IOError:
             QMessageBox.critical(self, '错误', '数据库链接失败')
 
+        # 登录失败后清空输入
         self.user_line.clear()
         self.pwd_line.clear()
 
