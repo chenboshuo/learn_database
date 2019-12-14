@@ -366,6 +366,10 @@
 （包括视图、索引等内容的测试）
 
 \section{应用程序设计}
+  \begin{itemize}
+    \item 项目地址:
+    \url{https://github.com/chenboshuo/learn_database/tree/final_project/final_project}
+  \end{itemize}
   本项目利用python的框架PyQt5 \upcite{pyqt5} 实现用户界面.
 
   \subsection{登录界面}
@@ -417,7 +421,21 @@
       \label{fig:datebase_class_del}
     \end{figure}
 
+    接下来让数据库连接失败时抛出异常\upcite{pyerror}, 登录窗口检测异常, 若无异常, 链接(如\cref{fig:connect_database}), 否则,重新输入(\cref{fig:connect_database_error}).
 
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{connect_database}
+      \caption{连接成功后控制台打印相关信息}
+      \label{fig:connect_database}
+    \end{figure}
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{connect_database_error}
+      \caption{链接失败提示并重新输入}
+      \label{fig:connect_database_error}
+    \end{figure}
 \section{设计总结}
   \subsection{应用改进}
 
@@ -430,7 +448,9 @@
     此外, 对于应用程序, 我选用了面向对象的设计思维,使用\emph{python}
     的\emph{PyQt5}可以较快的完成特别美观的界面,
     开发代码也简洁优雅, 并且有强大的界面美化库\upcite{icon},
-    程序可扩充性较强, 可以用\emph{python}的强大生态做成实用的工具.
+    程序可扩充性较强,
+    并且有简单的测试框架\upcite{pytest_doc}
+    可以用\emph{python}的强大生态做成实用的工具.
 
 
 
@@ -440,6 +460,7 @@
 \nocite{drawio}
 \nocite{pyqt5_beautify}
 \nocite{icon}
+\nocite{pyerror}
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
 
