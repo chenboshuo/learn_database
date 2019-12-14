@@ -6,13 +6,12 @@ from PyQt5.QtSql import QSqlDatabase, QSqlQuery # 导入QtSql模块
 
 class DataBase:
     """数据库连接, 管理的类"""
-    def __init__(self,Uid='testuser',Pwd='123456',server="localhost",driver="Sql Server"):
+    def __init__(self,username='testuser',password='123456',server="localhost",driver="Sql Server"):
         """链接数据库"""
         # 创建数据库连接并打开（未指定数据库名，创建默认连接）
-        global db
-        db = QSqlDatabase.addDatabase("QODBC")
-        db.setDatabaseName(f"Driver={driver};Server={server};Database=mytimetable;Uid={Uid};Pwd={Pwd}")
-        if db.open() == False:
+        self.db = QSqlDatabase.addDatabase("QODBC")
+        self.db.setDatabaseName(f"Driver={driver};Server={server};Database=mytimetable;Uid={username};Pwd={password}")
+        if self.db.open() == False:
             raise IOError("database not open")
 
         # 创建查询对象（使用默认数据库连接）
@@ -31,7 +30,7 @@ class DataBase:
 
     def __del__(self):
         """关闭数据库"""
-        db.close()
+        self.db.close()
 if __name__ == '__main__':
     test = DataBase()
 
