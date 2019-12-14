@@ -16,17 +16,17 @@ class Login(QWidget):
         super(Login, self).__init__()
         self.resize(300, 100)
 
-        self.user_label = QLabel('Username:', self)
-        self.pwd_label = QLabel('Password:', self)
+        self.user_label = QLabel('用户名:', self)
+        self.pwd_label = QLabel('密码:', self)
         self.user_line = QLineEdit(self)
         self.pwd_line = QLineEdit(self)
-        self.login_button = QPushButton('Log in', self)
+        self.login_button = QPushButton('链接数据库', self)
 
         self.grid_layout = QGridLayout()
         self.h_layout = QHBoxLayout()
         self.v_layout = QVBoxLayout()
 
-        self.lineedit_init()  # 单行文本输入框
+        self.line_edit_init()  # 单行文本输入框
         self.pushbutton_init()  # 按钮
         self.layout_init()
 
@@ -42,10 +42,10 @@ class Login(QWidget):
 
         self.setLayout(self.v_layout)
 
-    def lineedit_init(self):
+    def line_edit_init(self):
         """登录框的灰色文字"""
-        self.user_line.setPlaceholderText('Please enter your username')
-        self.pwd_line.setPlaceholderText('Please enter your password')
+        self.user_line.setPlaceholderText('输入数据库用户名')
+        self.pwd_line.setPlaceholderText('输入数据库密码')
         self.pwd_line.setEchoMode(QLineEdit.Password)  # 让密码变成圆点
 
         self.user_line.textChanged.connect(self.check_input_func)
@@ -73,7 +73,7 @@ class Login(QWidget):
             QMessageBox.information(self, 'Information', 'Log in Successfully!')
             sys.exit() # TODO 登录之后的处理
         else:
-            QMessageBox.critical(self, 'Wrong', 'Wrong Username or Password!')
+            QMessageBox.critical(self, '错误', '数据库链接失败')
 
         self.user_line.clear()
         self.pwd_line.clear()
