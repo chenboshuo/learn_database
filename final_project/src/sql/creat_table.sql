@@ -25,16 +25,6 @@ create table department(
   primary key (dept_id),
 );
 
- create table course(
-   course_id char(20),
-   title char(10) not null,
-   type char(10),
-   depart_id tinyint not null,
-
-   primary key (course_id),
-   foreign key (depart_id) references department,
-);
-
 create table instructor(
   ID char(20),
   name varchar(10) not null,
@@ -44,6 +34,16 @@ create table instructor(
 
   primary key (ID),
   foreign key (depart_id) references department,
+);
+
+create table course(
+  course_id char(20),
+  title char(10) not null,
+  type char(10),
+  instructor_id char(20) not null,
+
+  primary key (course_id),
+  foreign key (instructor_id) references instructor(ID),
 );
 
 create table class(
