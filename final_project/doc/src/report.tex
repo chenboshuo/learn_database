@@ -202,10 +202,29 @@
 
 \section{数据库概念结构设计}
   \subsection{实体分析}
-
+    经需求分析，本系统中包含六个实体，包含
+    教学楼,教室,院系,课程,教师,班级
   \subsection{属性分析}
-
+    \begin{itemize}
+      \item \emph{教学楼}实体集, 包含楼号和楼名;
+      \item \emph{教室}实体集, 包含楼号,教室号和容量;
+      \item \emph{院系}实体集, 包含院系编号和院系名;
+      \item \emph{课程}实体集, 包含课程号, 课程名, 课程类型, 开课学院;
+      \item \emph{教师}实体集, 包含教师的编号, 姓名,院系, 职称, 研究方向\footnote{可能是老师工作的具体院系, 如"计算机系", 也可能是其他研究所,如"基础数学研究所"};
+      \item \emph{班级}实体集, 班级ID, 班级名, 人数, 所属院系;
+    \end{itemize}
   \subsection{联系分析}
+
+      % 用户与图书有查看和购买联系，用户可以查看并购买图书，同时用户购买图书即生成一个订单，是用户和订单的联系；每个用户生成的不同订单集合到订单列表，两者之间有详细信息的联系；管理员与图书和图书分类有管理联系，管理员通过进货入库和销售出库对于图书详细信息进行更改；同时管理员可以查看订
+      % 单，对其有管理权限。
+    \begin{itemize}
+      \item 教室对教学楼有位置联系, 即教室位于特定教学楼;
+      \item 教室,课程与时间存在联系, 每个课程在特定时间的特定教室上课;
+      \item 课程老师存在联系, 某个课程由特定老师负责;
+      \item 班级与学院存在联系, 一个班级属于一个学院;
+      \item 老师与院系存在联系, 老师属于院系;
+    \end{itemize}
+
 
   \subsection{概念模型设计}
     经过需求分析和实体属性分析，
@@ -224,11 +243,47 @@
   \subsection{概念模型转化为逻辑模型}
     \subsubsection{一对一关系的转化}
       % （标注主、外键）
+      在数据库系统概念中\upcite{silberschatz1997database},$1:1$关系的定义为
+      \begin{quote}
+        An entity in $A$ is associated with \emph{at most} one entity in $B$,
+        and an entity in $B$ is associated with \emph{at most} one entity in $A$.
+      \end{quote}
+
+      根据定义可以看出, 数据库里没有一一对应关系.
 
     \subsubsection{一对多关系的转化}
+      一个 $1:n$ 联系有以下两种转换方式
+      \begin{enumerate}
+        \item 转换为一个独立的关系模式
+
+          \emph{关系的属性}：与该联系相连的各实体的码以及联系本身的属性.
+
+          \emph{关系的码}：$n$ 端实体的码.
+        \item 与 $n$ 端对应的关系模式合并
+          \emph{合并后关系的属性}：在 $n$ 端关系中加入 $1$ 端关系的码和联系本身的属性
+
+          \emph{合并后关系的码}：不变
+      \end{enumerate}
+      与 $n$端对应的关系模式合并可以减少系统中的关系个数，一般情况下更倾向于采用这种方法.
+
+      在本系统中, 院系对班级是$1:n$的关系,
+      一个院系有多个班级, 一个班级只能属于一个院系,
+      故班级表主键为\emph{班级号}, 外键为\emph{院系号},该键作为院系表的主键.
+      同理课程,老师对院系也是$1:n$的关系, 为\emph{院系号}仍作为他们的外键.
+
+      此外, \emph{教学楼}对\emph{教室}也是$1:n$关系,将\emph{教学楼号}作为教室的外键,
+      教室,教学楼主键分别是他们的编号.
+
 
     \subsubsection{多对多关系的转化}
+      一个 $m:n$ 联系可以转换为一个关系模式,其中:
+      \begin{quote}
+        \emph{关系的属性}：与该联系相连的各实体的码以及联系本身的属性
 
+        \emph{关系的码}：各实体码的组合
+      \end{quote}
+
+      本系统中,
   \subsection{逻辑模型设计}
     % （.pdm图）
     % \cref{fig:logical_model}
@@ -252,7 +307,7 @@
     \end{figure}
 
   \subsection{创建表和完整性约束代码设计}
-    教学楼表定义:
+    \subsubsection{\emph{教学楼}表}
     \begin{lstlisting}[language=sql]
       create table build(
         build_id tinyint,
@@ -261,7 +316,7 @@
       );
     \end{lstlisting}
 
-    教室表定义:
+    \subsubsection{\emph{教室}表}
     \begin{lstlisting}[language=sql]
       create table classroom(
         build_id tinyint,
@@ -272,7 +327,7 @@
       );
     \end{lstlisting}
 
-    院系表定义:
+    \subsubsection{\emph{院系}表}
     \begin{lstlisting}[language=sql]
       create table department(
         dept_id tinyint,
@@ -281,20 +336,20 @@
       );
     \end{lstlisting}
 
-    \emph{课程}表
+    \subsubsection{\emph{课程}表}
     \begin{lstlisting}[language=sql]
-     create table course(
-       course_id char(19),
-       title char(10) not null,
-       type char(10),
-       depart_id tinyint not null,
+      create table course(
+        course_id char(20),
+        title char(10) not null,
+        type char(10),
+        instructor_id char(20) not null,
 
-       primary key (course_id),
-       foreign key (depart_id) references department,
-    );
+        primary key (course_id),
+        foreign key (instructor_id) references instructor(ID),
+      );
     \end{lstlisting}
 
-    \emph{教师}表
+    \subsubsection{\emph{教师}表}
     \begin{lstlisting}[language=sql]
       create table instructor(
         ID char(20),
@@ -308,7 +363,7 @@
       );
     \end{lstlisting}
 
-    \emph{班级}表
+    \subsubsection{\emph{班级}表}
     \begin{lstlisting}[language=sql]
       create table class(
         class_id char(20),
@@ -321,7 +376,7 @@
       );
     \end{lstlisting}
 
-    \emph{时间}表
+    \subsubsection{\emph{时间}表}
     \begin{lstlisting}[language=sql]
       create table time_slot(
         time_slot_id char(20),
@@ -338,7 +393,7 @@
       );
     \end{lstlisting}
 
-    \emph{上课}表
+    \subsubsection{\emph{上课}表}
     \begin{lstlisting}[language=sql]
       create table section(
         sect_id char(20),
@@ -358,8 +413,6 @@
     \end{lstlisting}
 
   \subsection{创建视图、索引、存储过程和触发器}
-
-
 
 
 \section{数据库功能调试}
@@ -421,7 +474,9 @@
       \label{fig:datebase_class_del}
     \end{figure}
 
-    接下来让数据库连接失败时抛出异常\upcite{pyerror}, 登录窗口检测异常, 若无异常, 链接(如\cref{fig:connect_database}), 否则,重新输入(\cref{fig:connect_database_error}).
+    接下来让数据库连接:
+    传递输入的变量, 尝试链接数据库,
+    失败时抛出异常\upcite{pyerror}, 登录窗口检测异常,要求重新输入(\cref{fig:connect_database_error}); 若无异常, 链接(如\cref{fig:connect_database})
 
     \begin{figure}[H]
       \centering
@@ -436,16 +491,50 @@
       \caption{链接失败提示并重新输入}
       \label{fig:connect_database_error}
     \end{figure}
+
+  \subsection{主界面}
+    根据 \cite{pyqt5_beautify} 提供的教程和\cite{icon}提供相关的图标样式,设计主界面如
+    \cref{fig:main_ui}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{main_ui}
+      \caption{程序主要功能界面}
+      \label{fig:main_ui}
+    \end{figure}
+
 \section{设计总结}
   \subsection{应用改进}
+    在开始设计数据库时, 是想把它当作查询课表工具使用,
+    因为用教务系统查询其他学院课表时会消耗大量时间,
+    这样的重复工作理应当用程序实现,
+    但是查询别人课表是个小众需求, 市场上并没有课程表软件实现查询非自己班级课表的功能,所以我一直想找机会实现.
 
+    由于课程设计要求, 需要设计多角色多过程,
+    但是, 最终我希望它不是一个用于当作作业提交的系统,
+    而是一个好的辅助工具, 因此在界面设计是留下一些未完成的功能,比如html转化, 在今后有时间可以将html的图表格式通过识别信息储存到数据库中实现查询,还有爬虫, 可以直接登录教务系统查询结果并保存到本地, 当然这需要大量时间.
   \subsection{其他感想}
+
     老师要求使用的\emph{powerdesiner}是不太好用的软件,
     现在有在线服务可以将代码转换为示意图\upcite{sqldbm},
     设计精确到代码也许能保证后面的工作可以正确进行,
     且代码的操作比用鼠标操作更高效.
+    对于其他类型的图片,\url{draw.io}提供了更美观更自由,更多样的图片,并且可以自由导出\upcite{drawio},
+    互联网上有大量的优质软件和服务,
+    作为设计者, 不应该固步自封, 拘泥于某个软件,
+    有的软件自然好用方便, 但是可能有他不擅长的功能,
+    选择的时候要目光长远, 不能说能完成,
+    而是更高效优雅的完成.
+    比如用鼠标画图生成代码恐怕不是好主意,
+    诚然, 图片的转化是逻辑转化的过程,
+    但是图片一旦出错, 难以调整修改,
+    绘图操作又浪费了大量时间.
+    迷恋于可视化操作,当真正需要用程序调用的时候,
+    又不能很好的完成,
+    因为没有代码的思维甚至抵触代码,
+    对我们来说可能是致命的.
 
-    此外, 对于应用程序, 我选用了面向对象的设计思维,使用\emph{python}
+
+    对于应用程序, 我选用了面向对象的设计思维,使用\emph{python}
     的\emph{PyQt5}可以较快的完成特别美观的界面,
     开发代码也简洁优雅, 并且有强大的界面美化库\upcite{icon},
     程序可扩充性较强,
@@ -455,21 +544,9 @@
 
 
 % 参考文献
-\nocite{silberschatz1997database} % 数据库系统概论
+ % 数据库系统概论
 
-\nocite{drawio}
-\nocite{pyqt5_beautify}
-\nocite{icon}
-\nocite{pyerror}
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
 
 \end{document}
-
-
-% 命令用法
-% % 插入代码
-% \begin{lstlisting}[language=sql]
-%   use university;
-%   select * from university;
-% \end{lstlisting}
