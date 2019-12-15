@@ -26,28 +26,28 @@ create table department(
 );
 
 create table instructor(
-  ID char(20),
+  ID bigint,
   name varchar(10) not null,
-  title char(3), /* 职称*/
+  title char(6), /* 职称*/
   depart_id tinyint not null,
-  direction varchar(10), /* 研究所或者所属系 */
+  direction char(10), /* 研究所或者所属系 */
 
   primary key (ID),
   foreign key (depart_id) references department,
 );
 
 create table course(
-  course_id char(20),
+  course_id bigint,
   title char(10) not null,
   type char(10),
-  instructor_id char(20) not null,
+  instructor_id bigint not null,
 
   primary key (course_id),
   foreign key (instructor_id) references instructor(ID),
 );
 
 create table class(
-  class_id char(20),
+  class_id bigint,
   class_name char(10) not null,
   population tinyint,
   depart_id tinyint,
@@ -57,7 +57,7 @@ create table class(
 );
 
 create table time_slot(
-  time_slot_id char(20),
+  time_slot_id bigint,
   day tinyint not null,
   begin_time tinyint not null,
   end_time tinyint not null,
@@ -71,16 +71,18 @@ create table time_slot(
 );
 
 create table section(
-  sect_id char(20),
-  course_id char(20),
+  sect_id bigint,
+  course_id bigint,
+  class_id bigint,
   semester bit, /* 上半年或下半年 */
-  year int, /* 开课年份 */
-  building_id tinyint not null,
+  year_ int, /* 开课年份 */
+  build_id tinyint not null,
   room_number smallint not null,
-  time_slot_id char(20),
+  time_slot_id bigint,
 
   primary key (sect_id),
   foreign key (course_id) references course,
-  foreign key (building_id,room_number) references classroom,
+  foreign key (build_id,room_number) references classroom,
   foreign key (time_slot_id) references time_slot,
+  foreign key (class_id) references class
 );
