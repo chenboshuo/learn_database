@@ -11,7 +11,8 @@ class DataBase:
         # 创建数据库连接并打开（未指定数据库名，创建默认连接）
         self.db = QSqlDatabase.addDatabase("QODBC")
         self.db.setDatabaseName(f"Driver={driver};Server={server};Database=mytimetable;Uid={username};Pwd={password}")
-        if self.db.open() == False:
+        if not self.db.open():
+            self.db.close()
             raise IOError("database not open")
 
         # 创建查询对象（使用默认数据库连接）
