@@ -17,8 +17,8 @@ values
 insert into
   department
 values
-  (1, '统计'),
-  (2, '信息');
+  (1, '统计学院'),
+  (2, '信息学院');
 
 insert into
   instructor
