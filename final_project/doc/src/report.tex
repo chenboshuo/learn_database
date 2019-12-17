@@ -90,7 +90,7 @@
   \subsection{数据字典}
     \subsubsection{数据字典}
 
-      根据数据流图中所涉及的信息，并对信息进行相应的分析，确定出所有数据项的描述内容，其主要分为数据项名称、类型、长度和取值范围，如\cref{t:data_dict}所示
+      根据数据流图中所涉及的信息，并对信息进行相应的分析，确定出所有数据项的描述内容，其主要分为数据项名称、类型、长度和取值范围，如\cref{t:data_dict}所示\footnote{在本系统中, 所有ID均由其他信息组合成哈希函数代替(希望不要碰撞)}
 
       \begin{longtabu} to \textwidth {clcXXX}
         \caption{数据字典(具体的数据的大小参考\cite{tinyint})}
@@ -115,16 +115,16 @@
           容量    & 教学楼的容量 & tinyint & \SI{1}{B} & 0-255 & \\
           院系编号 & 院系的编号 & tinyint & \SI{1}{B} & 0-255 & \\
           院系名   & 院系名 & char(8) & $\le\SI{24}{B}$ & 0-255 & \\
-          课程号   & 课程编号 & char(20) & \SI{20}{B} & 20位 & \\
+          课程号   & 课程编号 & bigint & \SI{20}{B} & 20位 & \\
           课程名   & 课程名 & char(10) & $\le \SI{30}{B}$ & 10位 & \\
           类型名   & 课程的类型 & char(10) & $\le \SI{30}{B}$ & \\
-          教师号   & 教师编号 & char(20) & \SI{20}{B} & 20位 & \\
+          教师号   & 教师编号 & bigint & \SI{20}{B} & 20位 & \\
           教师名   & 教师的姓名 & char(10) & $\le \SI{30}{B}$ & \\
           职称     & 教师的职称 & char(3) &\SI{9}{B}  & 助教, 讲师, 副教授, 教授 \\
-          班号     & 班级编号 & char(20) & \SI{20}{B} & 20位 & \\
+          班号     & 班级编号 & bigint & \SI{20}{B} & 20位 & \\
           班名     & 班级的全名 & char(10) & $\le \SI{30}{B}$ & \\
           人数     & 班级人数 & tinyint & \SI{1}{B} & 0-255 & \\
-          时间号   & 上课时间的标识 & char(20) & \SI{20}{B} & 20位 & \\
+          时间号   & 上课时间的标识 & bigint & \SI{8}{B} & $-2^{63}$ - $2^{63}-1$ & \\
           日       & 星期几 & tinyint & \SI{1}{B} & 0-255 & 星期用1-5代替\\
           开始时间 & 上课时间 & tinyint & \SI{1}{B} & 0-255 & 假设上课时间都是整点, 24小时制\\
           结束时间 & 下课时间 & tinyint & \SI{1}{B} & 0-255 & 假设下课时间都是整点, 24小时制\\
@@ -132,7 +132,7 @@
           结束周   & 第几周结束 & tinyint & \SI{1}{B} & 0-255 & \\
           is\_odd  & 单周上课 & bit & \SI{1}{B} & 0,1 & 默认为1 \\
           is\_even & 双周上课 & bit & \SI{1}{B} & 0,1 & 默认为1 \\
-          节号      & 上课节的标识 & char(20) & \SI{20}{B} & 20位 & \\
+          节号      & 上课节的标识 & bigint & \SI{8}{B} & $-2^{63}$ - $2^{63}-1$ & \\
           学期      & 在上学期或下学期 & bit & \SI{1}{B} & 0,1 & 每年第一学期为0,第二学期为1 \\
           年        & 年份 & smallint & \SI{2}{B} &$-32,768$- $32,767$ & \\
 
@@ -283,7 +283,8 @@
         \emph{关系的码}：各实体码的组合
       \end{quote}
 
-      本系统中,
+      本系统中,上课为多对多关系, (时间号,课程号,教室号,教师号)为主键,
+      分别参照时间表, 课程表, 教室表, 教师表.
   \subsection{逻辑模型设计}
     % （.pdm图）
     % \cref{fig:logical_model}
@@ -339,10 +340,10 @@
     \subsubsection{\emph{课程}表}
     \begin{lstlisting}[language=sql]
       create table course(
-        course_id char(20),
+        course_id bigint,
         title char(10) not null,
         type char(10),
-        instructor_id char(20) not null,
+        instructor_id bigint not null,
 
         primary key (course_id),
         foreign key (instructor_id) references instructor(ID),
@@ -352,7 +353,7 @@
     \subsubsection{\emph{教师}表}
     \begin{lstlisting}[language=sql]
       create table instructor(
-        ID char(20),
+        ID bigint,
         name varchar(10) not null,
         title char(3), /* 职称*/
         depart_id tinyint not null,
@@ -366,7 +367,7 @@
     \subsubsection{\emph{班级}表}
     \begin{lstlisting}[language=sql]
       create table class(
-        class_id char(20),
+        class_id bigint,
         class_name char(10) not null,
         population tinyint,
         depart_id tinyint,
@@ -379,7 +380,7 @@
     \subsubsection{\emph{时间}表}
     \begin{lstlisting}[language=sql]
       create table time_slot(
-        time_slot_id char(20),
+        time_slot_id bigint,
         day tinyint not null,
         begin_time tinyint not null,
         end_time tinyint not null,
@@ -396,28 +397,194 @@
     \subsubsection{\emph{上课}表}
     \begin{lstlisting}[language=sql]
       create table section(
-        sect_id char(20),
-        course_id char(20),
+        sect_id bigint,
+        course_id bigint,
+        class_id bigint,
         semester bit, /* 上半年或下半年 */
-        year int, /* 开课年份 */
-        building_id tinyint not null,
+        year_ int, /* 开课年份 */
+        build_id tinyint not null,
         room_number smallint not null,
-        time_slot_id char(19),
+        time_slot_id bigint,
 
         primary key (sect_id),
         foreign key (course_id) references course,
-        foreign key (building_id,room_number) references classroom,
+        foreign key (build_id,room_number) references classroom,
         foreign key (time_slot_id) references time_slot,
+        foreign key (class_id) references class
       );
 
     \end{lstlisting}
 
   \subsection{创建视图、索引、存储过程和触发器}
+    \subsubsection{视图:我的课表}
+      班级课表视图代码如下
+      \begin{lstlisting}[language=sql]
+        use mytimetable;
 
+        go
+        create view class_timetable
+        as
+          select
+            build.name as 教学楼,
+            room_number as 教室号,
+            course.title as 课程名,
+            day as 星期,
+            begin_time as 上课时间,
+            end_time as 下课时间,
+            instructor.name as 教师名,
+            class_name as 上课班级
+          from
+            section,
+            course,
+            time_slot,
+            instructor,
+            build,
+            class
+          where
+            section.course_id = course.course_id
+            and section.time_slot_id = time_slot.time_slot_id
+            and course.instructor_id = instructor.ID
+            and section.build_id = build.build_id
+            and section.class_id = class.class_id
+            and semester = 0 -- 表示第一学期
+            and year_ = 2019 -- 2019年
+            and 3 between begin_week and end_week
+            and is_in_odd = 1
+            and class_name = '数学1801'
+      \end{lstlisting}
 
+    \subsubsection{触发器: 检查教室是否被占用}
+      当增加记录时,检查同时间的教室是否被使用.\cite{trigger,inserted}
+      \begin{lstlisting}[language=sql]
+        use mytimetable;
+        go
+        create trigger room_check on section
+        after
+        insert, update
+          as
+          if exists(
+            select *
+            from
+              section as s
+              join inserted as i
+              on i.time_slot_id = s.time_slot_id
+            where
+              s.build_id = i.build_id
+              and s.room_number = i.room_number
+          )
+          begin
+          print 'the room is not empty' ;rollback;
+        end
+
+      \end{lstlisting}
+
+      下面尝试修改,制造冲突
+      \begin{lstlisting}[language=sql]
+        use mytimetable;
+        update section
+        set time_slot_id =
+                      -6176928835455278985,
+        build_id = 1,
+        room_number = 404
+        where course_id = (
+          select course_id
+          from course
+          where title='数学分析')
+      \end{lstlisting}
+
+      结果被sql终止(如\cref{fig:teset_trigger})
+      \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.6\textwidth]{test_trigger}
+        \caption{对触发器的测试}
+        \label{fig:teset_trigger}
+      \end{figure}
+    \subsubsection{索引}
+      根据官方文档的提示\upcite{index}:
+      设计索引时，应考虑以下数据库准则：
+      \begin{itemize}
+        \item 对表编制大量索引会影响 INSERT、UPDATE、DELETE 和 MERGE 语句的性能，因为当表中的数据更改时，所有索引都须进行适当的调整。
+        例如，如果某个列在几个索引中使用且您执行修改该列数据的 UPDATE 语句，则必须更新包含该列的每个索引以及基础的基表（堆或聚集索引）中的该列。
+        \item 避免对经常更新的表进行过多的索引，并且索引应保持较窄，就是说，列要尽可能少。
+        \item 使用多个索引可以提高更新少而数据量大的查询的性能。
+        大量索引可以提高不修改数据的查询（例如 SELECT 语句）的性能，
+        因为查询优化器有更多的索引可供选择，从而可以确定最快的访问方法。
+        \item 对小表进行索引可能不会产生优化效果，
+        因为查询优化器在遍历用于搜索数据的索引时，花费的时间可能比执行简单的表扫描还长。
+        因此，小表的索引可能从来不用，但仍必须在表中的数据更改时进行维护。
+        \item 视图包含聚合、表联接或聚合和联接的组合时，
+        视图的索引可以显著地提升性能。
+        若要使查询优化器使用视图，并不一定非要在查询中显式引用该视图。
+      \end{itemize}
+      本数据库规模不大, 删改频繁, 不适合建立索引
+    \subsection{存储过程}
+      存储过程可以执行带参数的命令查询\upcite{procedure}
+      \begin{lstlisting}[language=sql]
+        use mytimetable
+        go
+
+        create procedure teacher_timetable @name varchar(10),
+        @semester bit,
+        /* 上半年或下半年 */
+        @year_ int
+        /* 开课年份 */
+        as
+        select
+          build.name as 教学楼,
+          room_number as 教室,
+          day as 星期,
+          begin_time as 开始时间,
+          end_time as 结束时间,
+          course.title as 课程,
+          instructor.name as 授课教师,
+          class_name as 班级,
+          dept_name as 开课学院
+        from
+          section
+          join course on course.course_id = section.course_id
+          join instructor on course.instructor_id = instructor.ID
+          join department on department.dept_id = instructor.dept_id
+          join build on build.build_id = section.build_id
+          join time_slot on time_slot.time_slot_id = section.time_slot_id
+          join class on class.class_id = section.class_id
+        where
+          instructor.name = @name
+          and semester = @semester
+          and year_ = @year_
+
+      \end{lstlisting}
 \section{数据库功能调试}
-（包括视图、索引等内容的测试）
+    % （包括视图、索引等内容的测试）
+    接下来用\emph{Transact-SQL}模拟函数功能
+  \subsection{查询班级课表}
+    直接从视图\emph{class\_timetable}中查询
+    \begin{lstlisting}[language=sql]
+        select * from class_timetable
+    \end{lstlisting}
 
+      结果如
+      \cref{fig:class_timetable}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[width = \textwidth]{class_timetable}
+        \caption{查询我的课表视图}
+        \label{fig:class_timetable}
+      \end{figure}
+
+    在应用程序中, 用应用程序的变量替换其中的一些信息(如班级),
+    检测到设置中班级修改, 重新建立类似的视图, 关注的课表也有类似操作.
+  \subsection{查老师的课表}
+    利用procedure teacher\_timetable, 第一个参数为教师姓名, 第二个为学期, 第三个为学年
+    \begin{lstlisting}[language=sql]
+      exec teacher_timetable '上帝', 0, 2019
+    \end{lstlisting}
+    \cref{fig:procedure}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{procedure}
+      \caption{查询随机数据中"上帝"的课}
+      \label{fig:procedure}
+    \end{figure}
 \section{应用程序设计}
   \begin{itemize}
     \item 项目地址:
@@ -503,6 +670,15 @@
     \end{figure}
 
 \section{设计总结}
+  \subsection{Tips}
+    \begin{itemize}
+      \item 可以用\emph{join..on}语句替代链接条件, 增加可读性
+      \item 触发器可以用于提醒消息,提醒电子邮件,
+        强制实现业务规则,
+        具有数据库范围的 DDL 触发器,
+        登录触发器等功能
+      \item procedure 可以当作数据库的函数
+    \end{itemize}
   \subsection{应用改进}
     在开始设计数据库时, 是想把它当作查询课表工具使用,
     因为用教务系统查询其他学院课表时会消耗大量时间,
@@ -541,10 +717,12 @@
     并且有简单的测试框架\upcite{pytest_doc}
     可以用\emph{python}的强大生态做成实用的工具.
 
-
+    此外, 查看了官方文档和数据库系统概念\upcite{silberschatz1997database},
+    里面强调编程风格的重要性,
+    好的可读性有利于系统维护.
 
 % 参考文献
- % 数据库系统概论
+
 
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
