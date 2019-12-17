@@ -29,12 +29,13 @@ create table instructor(
   ID bigint,
   name varchar(10) not null,
   title char(6), /* 职称*/
-  depart_id tinyint not null,
+  dept_id tinyint not null,
   direction char(10), /* 研究所或者所属系 */
 
   primary key (ID),
-  foreign key (depart_id) references department,
+  foreign key (dept_id) references department,
 );
+
 
 create table course(
   course_id bigint,
