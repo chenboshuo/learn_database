@@ -3,16 +3,12 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QLabel, QLineEdit, QPushButton, \
     QGridLayout, QVBoxLayout, QHBoxLayout, QMessageBox
+from PyQt5 import QtWidgets
 from DataBase import DataBase
-from MainUi import MainUi
-
-# 用于测试登录的用户密码
-USER_PWD = {
-        'admin': '123456'
-    }
 
 
-class Login(QWidget):
+
+class Login(QtWidgets.QDialog):
     """一个实现登录功能的类"""
     def __init__(self):
         super(Login, self).__init__()
@@ -72,16 +68,17 @@ class Login(QWidget):
     def check_login_func(self):
         """用于检测登录是否成功"""
         try:
-            # USER_PWD.get(self.user_line.text()) == self.pwd_line.text()
-            db = DataBase(self.user_line.text(),self.pwd_line.text())
-            QMessageBox.information(self, 'Information', 'Log in Successfully!')
-            sys.exit()  # 关闭程序
-
+            # db = DataBase(self.user_line.text(),self.pwd_line.text()) # 检测是否可以链接
+            db = DataBase() # TODO 为了测试, 无条件登录
         except IOError:
             QMessageBox.critical(self, '错误', '数据库链接失败')
+        else:
+            info = QMessageBox()
+            info.information(self, 'Information', '成功登录')
+            self.accept()
 
         # 登录失败后清空输入
-        self.user_line.clear()
+        # self.user_line.clear()
         self.pwd_line.clear()
 
 # 测试登录界面

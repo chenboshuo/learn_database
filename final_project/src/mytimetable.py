@@ -1,8 +1,7 @@
 from Login import Login
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QLabel, QLineEdit, QPushButton, \
-    QGridLayout, QVBoxLayout, QHBoxLayout, QMessageBox
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtWidgets
 from MainUi import MainUi
 
 
@@ -10,4 +9,7 @@ from MainUi import MainUi
 app = QApplication(sys.argv)
 login = Login()
 login.show()
-sys.exit(app.exec_())
+if login.exec_() == QtWidgets.QDialog.Accepted:
+    gui = MainUi()
+    gui.show()
+    sys.exit(app.exec_())
