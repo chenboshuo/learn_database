@@ -517,7 +517,7 @@
         若要使查询优化器使用视图，并不一定非要在查询中显式引用该视图。
       \end{itemize}
       本数据库规模不大, 删改频繁, 不适合建立索引
-    \subsection{存储过程}
+    \subsubsection{存储过程:按老师查询}
       存储过程可以执行带参数的命令查询\upcite{procedure}
       \begin{lstlisting}[language=sql]
         use mytimetable
@@ -553,10 +553,47 @@
           and year_ = @year_
 
       \end{lstlisting}
+
+    \subsubsection{存储过程:按班级查询}
+      类似地, 利用存储过程, 按班级查课表
+      \begin{lstlisting}[language=sql]
+        use mytimetable
+        go
+
+        create procedure class_timetable @class_name varchar(10),
+        @semester bit,
+        /* 上半年或下半年 */
+        @year_ int
+        /* 开课年份 */
+        as
+        select
+        build.name as 教学楼,
+        room_number as 教室,
+        day as 星期,
+        begin_time as 开始时间,
+        end_time as 结束时间,
+        course.title as 课程,
+        instructor.name as 授课教师,
+        class_name as 班级,
+        dept_name as 开课学院
+        from
+        section
+        join course on course.course_id = section.course_id
+        join instructor on course.instructor_id = instructor.ID
+        join department on department.dept_id = instructor.dept_id
+        join build on build.build_id = section.build_id
+        join time_slot on time_slot.time_slot_id = section.time_slot_id
+        join class on class.class_id = section.class_id
+        where
+        class.class_name = @class_name
+        and semester = @semester
+        and year_ = @year_
+      \end{lstlisting}
+
 \section{数据库功能调试}
     % （包括视图、索引等内容的测试）
     接下来用\emph{Transact-SQL}模拟函数功能
-  \subsection{查询班级课表}
+  \subsection{查询我的课表}
     直接从视图\emph{class\_timetable}中查询
     \begin{lstlisting}[language=sql]
         select * from class_timetable
@@ -581,10 +618,26 @@
     \cref{fig:procedure}
     \begin{figure}[H]
       \centering
-      \includegraphics[width = 0.6\textwidth]{procedure}
+      \includegraphics[width = \textwidth]{procedure}
       \caption{查询随机数据中"上帝"的课}
       \label{fig:procedure}
     \end{figure}
+
+  \subsection{查询指定班级课表}
+    利用存储过程 class\_timetable, 直接查询
+    \begin{lstlisting}[language=sql]
+      exec class_timetable '计科1801', 0, 2019
+    \end{lstlisting}
+
+    查询结果如
+    \cref{fig:query_by_class}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = \textwidth]{query_by_class}
+      \caption{查询随机数据中"计科1801"课表}
+      \label{fig:query_by_class}
+    \end{figure}
+
 \section{应用程序设计}
   \begin{itemize}
     \item 项目地址:
@@ -669,6 +722,15 @@
       \label{fig:main_ui}
     \end{figure}
 
+    接下来插入表格元件,放到窗口右侧,用于显示查询结果
+    \cref{fig:add_table}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{add_table}
+      \caption{首先在界面中插入表格元件,用于展示查询结果}
+      \label{fig:add_table}
+    \end{figure}
+
 \section{设计总结}
   \subsection{Tips}
     \begin{itemize}
@@ -716,6 +778,17 @@
     程序可扩充性较强,
     并且有简单的测试框架\upcite{pytest_doc}
     可以用\emph{python}的强大生态做成实用的工具.
+
+    同时, 由于环境版本号比较容易获得, 容易找到问题答案,
+    例如,在制作应用程序时, 由于接口不熟悉,
+    出现窗口切换问题,
+    通过简单描述,在\emph{stackoverflow}上找到优质答案
+    \upcite{change_window},
+    这种方便性是小众软件不能比的.
+
+    而老师推荐的方式我们并不熟悉,
+    并且程序的可移植性很差,
+    并不能说是好的工具.
 
     此外, 查看了官方文档和数据库系统概念\upcite{silberschatz1997database},
     里面强调编程风格的重要性,

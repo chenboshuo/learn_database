@@ -3,6 +3,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import qtawesome
+from DataBase import DataBase
 
 
 class MainUi(QtWidgets.QMainWindow):
@@ -27,6 +28,8 @@ class MainUi(QtWidgets.QMainWindow):
         self.main_layout.addWidget(self.right_widget, 0, 2, 12, 10)  # 右侧部件在第0行第3列，占8行9列
         self.setCentralWidget(self.main_widget)  # 设置窗口主部件
 
+        self.table_widget = QtWidgets.QTableView() # 创建一个表格部件
+        self.right_layout.addWidget(self.table_widget, 0, 3) # 将表格部件插入窗口
         self.left_close = QtWidgets.QPushButton("")  # 关闭按钮
         self.left_visit = QtWidgets.QPushButton("")  # 空白按钮
         self.left_mini = QtWidgets.QPushButton("")  # 最小化按钮
