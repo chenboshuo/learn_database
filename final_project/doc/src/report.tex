@@ -765,7 +765,9 @@
       \label{fig:main_ui}
     \end{figure}
 
-    接下来插入表格元件,放到窗口右侧,用于显示查询结果
+  \subsection{展示查询结果}
+
+    插入表格元件,放到窗口右侧,用于显示查询结果
     \cref{fig:add_table}
     \begin{figure}[H]
       \centering
@@ -773,6 +775,55 @@
       \caption{首先在界面中插入表格元件,用于展示查询结果}
       \label{fig:add_table}
     \end{figure}
+
+    然后给用户testuser授权
+    \begin{lstlisting}[language=sql]
+      grant select,execute,insert,alter
+      to testuser;
+    \end{lstlisting}
+
+    制作查询数据库并展示的函数\upcite{show_query}
+    \begin{lstlisting}[language=python]
+    def display_data(self, sql_statement):
+        """向主界面展示查询结果"""
+        print('processing query...')
+        qry = QSqlQuery(self.db)
+        qry.prepare(sql_statement)
+        qry.exec()
+
+        model = QSqlQueryModel()
+        model.setQuery(qry)
+
+        view = QTableView()
+        view.setModel(model)
+        return view
+    \end{lstlisting}
+    在主程序中调用, 完成我的课表查询功能如
+    \cref{fig:my_timetable_ui}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = \textwidth]{my_timetable_ui}
+      \caption{用户界面中我的课表查询结果}
+      \label{fig:my_timetable_ui}
+    \end{figure}
+
+    同理查关注课表,由于时间原因,
+    我们暂时没有制作设置界面, 关注教师列表是在json文件中读取,所以暂时显示默认关注的老师(图灵)如
+    \cref{fig:flowed_timetable}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = \textwidth]{flowed_timetable}
+      \caption{关注老师的课表}
+      \label{fig:flowed_timetable}
+    \end{figure}
+
+  \subsection{封装}
+
+
+
+
+
+
 
 \section{设计总结}
   \subsection{Tips}
@@ -838,7 +889,8 @@
     好的可读性有利于系统维护.
 
 % 参考文献
-
+\nocite{pipvenv}
+\nocite{ali_icon}
 
 \bibliography{reference} % 提示从reference数据库获取文献信息,来打印参考文献
 
