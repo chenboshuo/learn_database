@@ -2,7 +2,8 @@
 # -*- encoding: utf-8 -*-
 """存储database的相关函数"""
 # 参考 https://www.cnblogs.com/syh6324/p/9491518.html
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery # 导入QtSql模块
+from PyQt5.QtSql import QSqlDatabase, QSqlQueryModel, QSqlQuery # 导入QtSql模块
+from PyQt5.QtWidgets import QTableView, QApplication
 
 class DataBase:
     """数据库连接, 管理的类"""
@@ -32,6 +33,20 @@ class DataBase:
     def __del__(self):
         """关闭数据库"""
         self.db.close()
+
+    def display_data(self, sql_statement):
+        """向主界面展示查询结果"""
+        print('processing query...')
+        qry = QSqlQuery(self.db)
+        qry.prepare(sql_statement)
+        qry.exec()
+
+        model = QSqlQueryModel()
+        model.setQuery(qry)
+
+        view = QTableView()
+        view.setModel(model)
+        return view
 if __name__ == '__main__':
     test = DataBase()
 

@@ -10,6 +10,6 @@ app = QApplication(sys.argv)
 login = Login()
 login.show()
 if login.exec_() == QtWidgets.QDialog.Accepted:
-    gui = MainUi()
+    gui = MainUi(login.db)
     gui.show()
     sys.exit(app.exec_())

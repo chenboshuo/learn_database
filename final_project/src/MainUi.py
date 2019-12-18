@@ -7,12 +7,14 @@ from DataBase import DataBase
 
 
 class MainUi(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self,db):
         super().__init__()
+        self.db = db
         self.init_ui()
 
     def init_ui(self):
-        self.setFixedSize(720, 525)
+        # self.setFixedSize(720, 525)
+        self.setFixedSize(894, 525)
         self.main_widget = QtWidgets.QWidget()  # 创建窗口主部件
         self.main_layout = QtWidgets.QGridLayout()  # 创建主部件的网格布局
         self.main_widget.setLayout(self.main_layout)  # 设置窗口主部件布局为网格布局
@@ -28,9 +30,11 @@ class MainUi(QtWidgets.QMainWindow):
         self.main_layout.addWidget(self.right_widget, 0, 2, 12, 10)  # 右侧部件在第0行第3列，占8行9列
         self.setCentralWidget(self.main_widget)  # 设置窗口主部件
 
-        self.table_widget = QtWidgets.QTableView() # 创建一个表格部件
+        # self.table_widget = QtWidgets.QTableView()  # 创建一个表格部件
+        self.table_widget = self.db.display_data('select * from class_timetable')
         self.right_layout.addWidget(self.table_widget, 0, 3) # 将表格部件插入窗口
         self.left_close = QtWidgets.QPushButton("")  # 关闭按钮
+        self.left_close.clicked.connect(self.close)
         self.left_visit = QtWidgets.QPushButton("")  # 空白按钮
         self.left_mini = QtWidgets.QPushButton("")  # 最小化按钮
         self.left_close.setFixedSize(15, 15)  # 设置关闭按钮的大小
@@ -169,7 +173,7 @@ class MainUi(QtWidgets.QMainWindow):
 
         self.setWindowOpacity(0.9)  # 设置窗口透明度
         # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
-        # self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 隐藏边框
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 隐藏边框
         self.main_layout.setSpacing(0)
 
 if __name__ == '__main__':

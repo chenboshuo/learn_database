@@ -69,7 +69,7 @@ class Login(QtWidgets.QDialog):
         """用于检测登录是否成功"""
         try:
             # db = DataBase(self.user_line.text(),self.pwd_line.text()) # 检测是否可以链接
-            db = DataBase() # TODO 为了测试, 无条件登录
+            self.db = DataBase() # TODO 为了测试, 无条件登录
         except IOError:
             QMessageBox.critical(self, '错误', '数据库链接失败')
         else:
