@@ -610,7 +610,7 @@
 
     在应用程序中, 用应用程序的变量替换其中的一些信息(如班级),
     检测到设置中班级修改, 重新建立类似的视图, 关注的课表也有类似操作.
-  \subsection{查老师的课表}
+  \subsection{查老师的某学期课表}
     利用procedure teacher\_timetable, 第一个参数为教师姓名, 第二个为学期, 第三个为学年
     \begin{lstlisting}[language=sql]
       exec teacher_timetable '上帝', 0, 2019
@@ -636,6 +636,49 @@
       \includegraphics[width = \textwidth]{query_by_class}
       \caption{查询随机数据中"计科1801"课表}
       \label{fig:query_by_class}
+    \end{figure}
+
+  \subsection{查询老师带的所有课}
+    \begin{lstlisting}[language=sql]
+    use mytimetable -- 查询老师带的课程
+    select
+      name as 教师名,
+      course.title as 课程名,
+      type as 课程类型
+    from
+      instructor
+      join course on course.instructor_id = instructor.ID
+    where
+      name = '图灵'
+    \end{lstlisting}
+    结果如
+    \cref{fig:teacher_course}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{teacher_course}
+      \caption{查询随机数据中"图灵"老师的课}
+      \label{fig:teacher_course}
+    \end{figure}
+
+  \subsection{查询某个班级所有课程}
+    \begin{lstlisting}[language=sql]
+    select
+      title as 课程名,
+      type as 课程类型
+    from
+      section
+      join class on class.class_id = section.class_id
+      join course on course.course_id = section.course_id
+    where
+      class_name = '数学1801'
+    \end{lstlisting}
+    结果如
+    \cref{fig:class_course}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width = 0.6\textwidth]{class_course}
+      \caption{样例数据中"数学1801"的所有课程}
+      \label{fig:class_course}
     \end{figure}
 
 \section{应用程序设计}
