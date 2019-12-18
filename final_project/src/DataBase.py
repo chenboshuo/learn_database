@@ -47,6 +47,8 @@ class DataBase:
         view = QTableView()
         view.setModel(model)
         return view
+
+
 if __name__ == '__main__':
     test = DataBase()
 

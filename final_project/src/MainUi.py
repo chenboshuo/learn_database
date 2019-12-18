@@ -31,8 +31,8 @@ class MainUi(QtWidgets.QMainWindow):
         self.setCentralWidget(self.main_widget)  # 设置窗口主部件
 
         # self.table_widget = QtWidgets.QTableView()  # 创建一个表格部件
-        self.table_widget = self.db.display_data('select * from class_timetable')
-        self.right_layout.addWidget(self.table_widget, 0, 3) # 将表格部件插入窗口
+
+        self.my_timetabe()
         self.left_close = QtWidgets.QPushButton("")  # 关闭按钮
         self.left_close.clicked.connect(self.close)
         self.left_visit = QtWidgets.QPushButton("")  # 空白按钮
@@ -54,8 +54,10 @@ class MainUi(QtWidgets.QMainWindow):
         self.left_label_3.setObjectName('left_label')
         #  qtawesome.icon: http://fontawesome.dashgame.com/
         self.left_button_1 = QtWidgets.QPushButton(qtawesome.icon('fa.th', color='white'), "班级课表")
+        self.left_button_1.clicked.connect(self.my_timetabe)
         self.left_button_1.setObjectName('left_button')
         self.left_button_2 = QtWidgets.QPushButton(qtawesome.icon('fa.heart', color='white'), "关注课表")
+        self.left_button_2.clicked.connect(self.followed_timetable)
         self.left_button_2.setObjectName('left_button')
         self.left_button_3 = QtWidgets.QPushButton(qtawesome.icon('fa.th-list', color='white'), "其他查询")
         self.left_button_3.setObjectName('left_button')
@@ -175,6 +177,15 @@ class MainUi(QtWidgets.QMainWindow):
         # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 隐藏边框
         self.main_layout.setSpacing(0)
+
+    def my_timetabe(self):
+        """显示我的班级课表"""
+        self.table_widget = self.db.display_data('select * from class_timetable')
+        self.right_layout.addWidget(self.table_widget, 0, 3)  # 将表格部件插入窗口
+    def followed_timetable(self):
+        """查询关注课表"""
+        self.table_widget = self.db.display_data("exec teacher_timetable '图灵', 0, 2019")
+        self.right_layout.addWidget(self.table_widget, 0, 3)  # 将表格部件插入窗口
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
