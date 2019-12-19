@@ -16,19 +16,7 @@ class DataBase:
             self.db.close()
             raise IOError("database not open")
 
-        # 创建查询对象（使用默认数据库连接）
-        query = QSqlQuery()
 
-        # 查询数据库名（保存在master.sys.databases表中）
-        query.exec ("Select name From sys.databases") # <class 'bool'>
-
-        # 依次打印数据库名（系统数据库除外）
-        while query.next():
-            # 获取名称字段的值
-            name = query.value("name")
-            # 如果不是系统数据库，打印
-            if name.lower() not in ('master', 'tempdb', 'model', 'msdb'):
-                print(name)
 
     def __del__(self):
         """关闭数据库"""
@@ -36,7 +24,6 @@ class DataBase:
 
     def display_data(self, sql_statement):
         """向主界面展示查询结果"""
-        print('processing query...')
         qry = QSqlQuery(self.db)
         qry.prepare(sql_statement)
         qry.exec()
